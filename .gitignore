@@ -77,3 +77,4 @@ crashlytics-build.properties
 
 # Some weird stuff
 */src_BurstDebugInformation_DoNotShip/
+*/mono_crash.0.0.json
