@@ -46,6 +46,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.utmp
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -73,3 +74,6 @@ crashlytics-build.properties
 
 # Mac-OS specific file from who knows where
 .DS_Store
+
+# Some weird stuff
+*/src_BurstDebugInformation_DoNotShip/
