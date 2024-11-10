@@ -40,14 +40,13 @@ public class MapManager : MonoBehaviour
     SaveMaps();
   }
 
-  // Get all map names from loaded
-  public List<string> GetMapNames()
-  {
-      List<string> mapNames = new List<string>();
-      foreach (MapData map in maps)
-      {
-          mapNames.Add(map.mapName);
-      }
-      return mapNames;
+  // Method to get all nicknames of loaded maps
+  public List<string> GetMapNames() {
+    List<string> mapNames = new List<string>();
+    foreach (MapData map in maps) {
+      mapNames.Add(map.mapName);
+    }
+
+    return mapNames;
   }
 }
