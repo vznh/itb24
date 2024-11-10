@@ -9,9 +9,6 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
-	"last_search.66F56946" = "build profiles"
-	"OpenInspectorPreview.66F56946" = "0"
-	"currentGroup.66F56946" = ""
 }
 providers = {
 	asset = {
@@ -68,9 +65,6 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
-	"build profiles"
-	"build pr"
-	"build set"
 ]
 searchItemFavorites = [
 ]

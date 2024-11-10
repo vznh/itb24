@@ -4,16 +4,20 @@
 TagManager:
   serializedVersion: 3
   tags:
+  - Projectile
+  - Target
   - Anchor
+  - PlayerHand
+  - Destroyer
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Floor
+  - 
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Mirror
   - 
   - 
   - 

@@ -32,6 +32,11 @@ public class GameStartMenu : MonoBehaviour
     aboutButton.onClick.AddListener(EnableAbout);
     quitButton.onClick.AddListener(QuitGame);
 
+    buildButton.gameObject.SetActive(true);
+    communityButton.gameObject.SetActive(true);
+    aboutButton.gameObject.SetActive(true);
+    quitButton.gameObject.SetActive(true);
+
     foreach (var item in returnButtons)
     {
       item.onClick.AddListener(EnableMainMenu);
@@ -65,6 +70,11 @@ public class GameStartMenu : MonoBehaviour
     buildMenu.SetActive(false);
     community.SetActive(false);
     about.SetActive(false);
+
+    buildButton.gameObject.SetActive(true);
+    communityButton.gameObject.SetActive(true);
+    aboutButton.gameObject.SetActive(true);
+    quitButton.gameObject.SetActive(true);
   }
 
   public void EnableBuildMenu()
