@@ -1,65 +1,109 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class DropdownManager : MonoBehaviour
 {
-  public TMP_Dropdown mapDropdown;
-  public MapManager mapManager;
+    [Header("UI Components")]
+    public TMP_Dropdown mapDropdown;
+    public Button beginButton;
+    public TextMeshProUGUI loadButtonText; // Reference to the Load Button's text component
+    public MapManager mapManager;
 
-  private const string CREATE_NEW_MAP_OPTION = "+ Create new map";
+    // Option text for creating a new map
+    private const string CREATE_NEW_MAP_OPTION = "Create New Map";
+    private const string SELECT_MAP_OPTION = "* Select a Map";
 
-  void Start()
-  {
-    PopulateDropdown();
-  }
-
-  // Method to populate the dropdown with map names
-  public void PopulateDropdown()
-  {
-    // Clear existing options
-    mapDropdown.ClearOptions();
-
-    // Get the list of map names from the MapManager
-    List<string> mapNames = mapManager.GetMapNames();
-
-    // Add a default "Select a Map" option
-    List<string> dropdownOptions = new List<string> { "* Map not selected" };
-    dropdownOptions.AddRange(mapNames);
-
-    // Add "Create new map" option
-    dropdownOptions.Add(CREATE_NEW_MAP_OPTION);
-
-    // Add the options to the TMP dropdown
-    mapDropdown.AddOptions(dropdownOptions);
-  }
-
-  // Method to handle when the user selects an option in the dropdown
-  private void OnDropdownValueChanged(int index)
-  {
-    // Get the selected option text
-    string selectedOption = mapDropdown.options[index].text;
-
-    // Check if the "Create New Map" option was selected
-    if (selectedOption == CREATE_NEW_MAP_OPTION)
+    void Start()
     {
-      CreateNewMap();
+        PopulateDropdown();
+        mapDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
+
+        // Set the Begin button to be initially disabled
+        SetBeginButtonState(false);
+        UpdateLoadButtonText("");
     }
-    else
+
+    // Method to populate the dropdown with map names
+    public void PopulateDropdown()
     {
-      // Handle loading an existing map if needed
-      Debug.Log("Selected map: " + selectedOption);
+        mapDropdown.ClearOptions();
+
+        // Get the list of map names from the MapManager
+        List<string> mapNames = mapManager.GetMapNames();
+
+        // Add default options
+        List<string> dropdownOptions = new List<string> { SELECT_MAP_OPTION };
+        dropdownOptions.AddRange(mapNames);
+
+        // Add the "Create New Map" option at the end
+        dropdownOptions.Add(CREATE_NEW_MAP_OPTION);
+
+        // Add the options to the TMP dropdown
+        mapDropdown.AddOptions(dropdownOptions);
+
+        // Reset the dropdown to the first option
+        mapDropdown.value = 0;
+        OnDropdownValueChanged(0);
     }
-  }
 
-  // Method to create a new map
-  private void CreateNewMap()
-  {
-    string newMapName = "New Map " + (mapManager.maps.Count + 1);
-    mapManager.AddNewMap(newMapName);
-    Debug.Log("New map created: " + newMapName);
+    // Method to handle dropdown selection changes
+    private void OnDropdownValueChanged(int index)
+    {
+        string selectedOption = mapDropdown.options[index].text;
 
-    // Refresh the dropdown to include the newly created map
-    PopulateDropdown();
-  }
+        // Check if "Create New Map" was selected
+        if (selectedOption == CREATE_NEW_MAP_OPTION)
+        {
+            CreateNewMap();
+        }
+        else if (selectedOption != SELECT_MAP_OPTION)
+        {
+            SetBeginButtonState(true);
+            UpdateLoadButtonText($"To load: {selectedOption}");
+        }
+        else
+        {
+            SetBeginButtonState(false);
+            UpdateLoadButtonText("");
+        }
+    }
+
+    // Method to create a new map
+    private void CreateNewMap()
+    {
+        string newMapName = "New Map " + (mapManager.maps.Count + 1);
+        mapManager.AddNewMap(newMapName);
+        Debug.Log("New map created: " + newMapName);
+
+        // Refresh the dropdown with the new map
+        PopulateDropdown();
+
+        // Select the newly created map in the dropdown
+        int newMapIndex = mapDropdown.options.FindIndex(option => option.text == newMapName);
+        if (newMapIndex >= 0)
+        {
+            mapDropdown.value = newMapIndex;
+            OnDropdownValueChanged(newMapIndex);
+        }
+    }
+
+    // Method to set the Begin button's state and opacity
+    private void SetBeginButtonState(bool isEnabled)
+    {
+        beginButton.interactable = isEnabled;
+        Color buttonColor = beginButton.image.color;
+        buttonColor.a = isEnabled ? 1.0f : 0.2f; // Set opacity to 100% or 20%
+        beginButton.image.color = buttonColor;
+    }
+
+    // Method to update the Load button text
+    private void UpdateLoadButtonText(string mapName)
+    {
+        if (loadButtonText != null)
+        {
+            loadButtonText.text = mapName;
+        }
+    }
 }
