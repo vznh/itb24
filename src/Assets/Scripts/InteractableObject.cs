@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class InteractableObject : XRGrabInteractable
 {
-    public enum LockMode { Draggable, PartialLock, FullFreeze }
+    public enum LockMode { Draggable, PartialLock }
     [SerializeField]
     private LockMode currentLockMode = LockMode.Draggable;
 
@@ -81,7 +81,7 @@ public class InteractableObject : XRGrabInteractable
 
     private void CycleLockMode()
     {
-        currentLockMode = (LockMode)(((int)currentLockMode + 1) % 3);
+        currentLockMode = (LockMode)(((int)currentLockMode + 1) % 2);
 
         switch (currentLockMode)
         {
@@ -95,12 +95,6 @@ public class InteractableObject : XRGrabInteractable
                 rigidBody.isKinematic = true;
                 useGravityOnRelease = false;
                 interactionLayers = InteractionLayerMask.GetMask("Default"); // Allow grabbing and hovering
-                break;
-
-            case LockMode.FullFreeze:
-                rigidBody.isKinematic = true;
-                useGravityOnRelease = false;
-                interactionLayers = InteractionLayerMask.GetMask("Hover"); // Allow only hovering, no grabbing
                 break;
         }
     }
