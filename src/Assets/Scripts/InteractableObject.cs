@@ -1,12 +1,21 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.UI;
 
 public class InteractableObject : XRGrabInteractable
 {
-    // Variables for customization
+    public enum LockMode { Draggable, PartialLock, FullFreeze }
+    [SerializeField]
+    private LockMode currentLockMode = LockMode.Draggable;
+
     [SerializeField]
     private bool useGravityOnRelease = true;
+
+    [SerializeField]
+    private Canvas lockCanvas;
+    [SerializeField]
+    private Button lockButton;
 
     private Rigidbody rigidBody;
 
@@ -19,26 +28,80 @@ public class InteractableObject : XRGrabInteractable
         {
             Debug.LogError("Rigidbody is missing from the object. Please add a Rigidbody component.");
         }
+
+        if (lockCanvas != null)
+        {
+            lockCanvas.gameObject.SetActive(false);
+        }
+
+        if (lockButton != null)
+        {
+            lockButton.onClick.AddListener(CycleLockMode);
+        }
+    }
+
+    protected override void OnHoverEntered(HoverEnterEventArgs args)
+    {
+        base.OnHoverEntered(args);
+        if (lockCanvas != null)
+        {
+            lockCanvas.gameObject.SetActive(true);
+        }
+    }
+
+    protected override void OnHoverExited(HoverExitEventArgs args)
+    {
+        base.OnHoverExited(args);
+        if (lockCanvas != null)
+        {
+            lockCanvas.gameObject.SetActive(false);
+        }
     }
 
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
         base.OnSelectEntered(args);
-        // Logic for when the key is grabbed
-        if (rigidBody != null)
+
+        if (currentLockMode == LockMode.Draggable)
         {
-            rigidBody.isKinematic = true; // Disable physics while interacting
+            rigidBody.isKinematic = true;
         }
     }
 
     protected override void OnSelectExited(SelectExitEventArgs args)
     {
         base.OnSelectExited(args);
-        // Logic for when the key is released
-        if (rigidBody != null)
+
+        if (currentLockMode == LockMode.Draggable)
         {
-            rigidBody.isKinematic = false; // Enable physics
-            rigidBody.useGravity = useGravityOnRelease; // Use gravity if specified
+            rigidBody.isKinematic = false;
+            rigidBody.useGravity = useGravityOnRelease;
+        }
+    }
+
+    private void CycleLockMode()
+    {
+        currentLockMode = (LockMode)(((int)currentLockMode + 1) % 3);
+
+        switch (currentLockMode)
+        {
+            case LockMode.Draggable:
+                rigidBody.isKinematic = false;
+                useGravityOnRelease = true;
+                interactionLayers = InteractionLayerMask.GetMask("Default"); // Enable full interaction
+                break;
+
+            case LockMode.PartialLock:
+                rigidBody.isKinematic = true;
+                useGravityOnRelease = false;
+                interactionLayers = InteractionLayerMask.GetMask("Default"); // Allow grabbing and hovering
+                break;
+
+            case LockMode.FullFreeze:
+                rigidBody.isKinematic = true;
+                useGravityOnRelease = false;
+                interactionLayers = InteractionLayerMask.GetMask("Hover"); // Allow only hovering, no grabbing
+                break;
         }
     }
 }
